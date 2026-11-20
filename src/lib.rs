@@ -15,7 +15,7 @@ use config::AppState;
 use tower_http::{services::ServeDir, trace::TraceLayer};
 
 /// Builds the complete Axum router with Basic Auth isolation on Admin routes,
-/// public webhook & health endpoints, and static CSS serving.
+/// public webhook & health endpoints, and embedded + filesystem static CSS serving.
 pub fn build_router(state: AppState) -> Router {
     let admin_routes = Router::new()
         .route("/", get(routes::admin::dashboard))
@@ -33,13 +33,17 @@ pub fn build_router(state: AppState) -> Router {
             middleware::auth::basic_auth_middleware,
         ));
 
+    let static_routes = Router::new()
+        .route("/style.css", get(routes::admin::serve_embedded_css))
+        .fallback_service(ServeDir::new("static"));
+
     let public_routes = Router::new()
         .route("/health", get(routes::admin::health_check))
         .route(
             "/webhook/evolution",
             post(routes::webhook::handle_evolution_webhook),
         )
-        .nest_service("/static", ServeDir::new("static"));
+        .nest("/static", static_routes);
 
     Router::new()
         .merge(admin_routes)
