@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Agent Hub — Painel Multi-Tenant</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-brand">
+        <div class="logo-badge">WA</div>
+        <div class="header-title">
+          <h1>WhatsApp Agent Hub</h1>
+          <p>Madosan Dev &bull; Plataforma SaaS Multi-Tenant de Agentes de IA</p>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="status-indicator">
+          <span class="indicator-dot"></span>
+          <span>Axum Core Ativo (SQLite)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main 2-Column Grid -->
+    <main class="main-grid">
+      <!-- Coluna Esquerda: Formulário de Configuração -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Novo Agente de WhatsApp</h2>
+            <p class="card-subtitle">Cadastre ou configure o isolamento do tenant</p>
+          </div>
+        </div>
+
+        <form method="POST" action="/admin/agents">
+          <div class="form-group">
+            <label class="form-label" for="tenant_slug">Tenant Slug (ID Único)</label>
+            <input 
+              type="text" 
+              id="tenant_slug" 
+              name="tenant_slug" 
+              class="form-control" 
+              placeholder="ex: agent-mecanica-silva" 
+              required 
+              pattern="[a-zA-Z0-9_-]+" 
+              title="Apenas letras, números, hífens e underlines"
+            />
+            <div class="form-hint">Identificador exclusivo do cliente para isolamento de dados e histórico.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="evolution_instance">Instância Evolution API</label>
+            <input 
+              type="text" 
+              id="evolution_instance" 
+              name="evolution_instance" 
+              class="form-control" 
+              placeholder="ex: inst_mecanica_silva_01" 
+              required 
+            />
+            <div class="form-hint">Nome exato da instância cadastrada na Evolution API.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="system_prompt">System Prompt (Diretriz do Agente)</label>
+            <textarea 
+              id="system_prompt" 
+              name="system_prompt" 
+              class="form-control" 
+              placeholder="Você é o assistente virtual da Oficina Mecânica Silva. Atenda os clientes com polidez, tire dúvidas e faça agendamentos..."
+              required
+            ></textarea>
+            <div class="form-hint">Personalidade, regras de atendimento e contexto específico do tenant.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Permissões de Ferramentas (Zero-Trust)</label>
+            <div class="checkbox-group">
+              <label class="checkbox-item">
+                <input type="checkbox" name="tool_consultar_agenda" value="consultar_agenda" checked />
+                <div class="checkbox-label-text">
+                  <span class="checkbox-label-title">consultar_agenda</span>
+                  <span class="checkbox-label-desc">Permite checar horários e datas disponíveis no calendário</span>
+                </div>
+              </label>
+
+              <label class="checkbox-item">
+                <input type="checkbox" name="tool_criar_agendamento" value="criar_agendamento" checked />
+                <div class="checkbox-label-text">
+                  <span class="checkbox-label-title">criar_agendamento</span>
+                  <span class="checkbox-label-desc">Permite confirmar e salvar agendamentos solicitados pelo cliente</span>
+                </div>
+              </label>
+
+              <label class="checkbox-item">
+                <input type="checkbox" name="tool_transferir_para_humano" value="transferir_para_humano" checked />
+                <div class="checkbox-label-text">
+                  <span class="checkbox-label-title">transferir_para_humano</span>
+                  <span class="checkbox-label-desc">Ativa trava de transbordo e pausa o agente para atendimento humano</span>
+                </div>
+              </label>
+            </div>
+            <div class="form-hint">Apenas ferramentas explicitamente marcadas poderão ser invocadas pela IA.</div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            Salvar e Ativar Agente
+          </button>
+        </form>
+      </section>
+
+      <!-- Coluna Direita: Lista de Agentes Registrados -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Agentes Cadastrados</h2>
+            <p class="card-subtitle">Clientes com instâncias ativas no sistema</p>
+          </div>
+          <span class="badge badge-tool">{{AGENT_COUNT}} cadastrado(s)</span>
+        </div>
+
+        <div class="agents-list">
+          {{AGENTS_CARDS}}
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
