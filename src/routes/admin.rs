@@ -6,13 +6,24 @@ use crate::{
 };
 use axum::{
     extract::{Path, State},
-    http::StatusCode,
+    http::{header, StatusCode},
     response::{Html, IntoResponse, Redirect},
     Form, Json,
 };
 use serde_json::json;
 
 const DASHBOARD_TEMPLATE: &str = include_str!("../../templates/dashboard.html");
+const EMBEDDED_STYLE_CSS: &str = include_str!("../../static/style.css");
+
+/// Serves `style.css` embedded directly in the release binary so the Admin UI
+/// works identically regardless of the working directory.
+pub async fn serve_embedded_css() -> impl IntoResponse {
+    (
+        StatusCode::OK,
+        [(header::CONTENT_TYPE, "text/css; charset=utf-8")],
+        EMBEDDED_STYLE_CSS,
+    )
+}
 
 /// Escapes HTML special characters to prevent Stored XSS in rendered cards.
 fn escape_html(input: &str) -> String {
