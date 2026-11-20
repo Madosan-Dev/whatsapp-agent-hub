@@ -1,0 +1,9 @@
+/target
+hub.db
+hub.db*
+*.db
+*.db-shm
+*.db-wal
+.env
+.DS_Store
+Thumbs.db
